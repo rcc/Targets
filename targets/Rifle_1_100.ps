@@ -1,0 +1,86 @@
+%!
+/title (Rifle) def
+
+% distance in yards
+/distance 100 def
+
+% ring spacing in moa
+/moaspacing 1 def
+
+% convert distance to inches
+/distance_in distance 3 mul 12 mul def
+
+% define 1 moa for this distance
+/moa 1.0 60.0 div dup sin exch cos div distance_in mul def
+
+% define an inch as 72 dpi
+/inch {72 mul} def
+
+% define the page size
+/xsize 8.5 inch def
+/ysize 11.0 inch def
+
+% margin
+/margin 0.4 inch def
+
+% center
+/xcenter xsize 2 div def
+/ycenter ysize 2 div def
+
+% set the page size
+<</PageSize [xsize ysize]>> setpagedevice
+
+% Main Title
+/Courier-Bold findfont
+12 scalefont
+setfont
+margin ysize margin sub moveto
+%    title and distance
+title show
+( / ) show
+distance 5 string cvs show
+( yards) show
+%    date and gun
+xcenter ysize margin sub moveto
+(Date:             Gun:) show
+
+% MOA
+/Courier findfont
+10 scalefont
+setfont
+margin ysize margin sub 0.2 inch sub moveto
+(MOA: ) show
+moa 10 string cvs show
+( inches) show
+
+% draw 1 MOA cross
+newpath
+5 setlinewidth
+xcenter ycenter moa inch 2 div sub moveto
+0 moa inch rlineto stroke
+xcenter moa inch 2 div sub ycenter moveto
+moa inch 0 rlineto stroke
+closepath
+
+% draw MOA circles
+/Courier findfont
+10 scalefont
+setfont
+/ring moaspacing def
+/arcradius {moa mul inch 2 div} def
+{
+	ring arcradius xcenter add ycenter moveto
+	newpath
+	5 setlinewidth
+	xcenter ycenter ring arcradius 0 360 arc stroke
+	closepath
+
+	ring arcradius xcenter add 20 sub ycenter 10 add moveto
+	ring 3 string cvs show
+
+	/ring ring moaspacing add def
+	ring arcradius xsize 2 div margin sub gt {exit} if
+} loop
+
+showpage
+%% EOF
